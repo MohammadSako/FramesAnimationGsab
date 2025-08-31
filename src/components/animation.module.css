@@ -1,0 +1,216 @@
+/* homescreen - pages (zoom out version) */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* to let firefox show the images when animation not supported on it */
+  @supports (animation-timeline: view()) {
+    .text {
+      /* landing text will zoom OUT as the element moves through the view timeline */
+      animation: landing-text-zoomout linear forwards;
+      animation-timeline: view();
+      /* animation-range: exit; */
+      transform-origin:center ;
+      height: 100vh;
+      overflow-y: auto;
+      overflow-x: hidden;
+      /* start scaled up so animation can scale down */
+      transform: scale(3);
+      opacity: 1;
+    }
+
+    .img {
+      animation: img-fade-zoomout linear forwards;
+      animation-timeline: view();
+      animation-range: contain 50px;
+      /* start slightly larger and faded so it zooms out & fades in */
+      transform: scale(3.1);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .img2 {
+      animation: img-fade-zoomout-2 linear forwards;
+      animation-timeline: view();
+      animation-range: contain 50px;
+      transform: scale(1.05);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* Icons List page initial states (kept but converted to transform) */
+    .img {
+      /* if you want these elements to appear smaller on Icons List page initially,
+         adjust the transform below (here we leave them slightly reduced) */
+      /* transform: scale(0.8); commented out because we already set initial above */
+    }
+    .img2 {
+      /* transform: scale(1); - kept default in animation */
+    }
+
+    /* Image fade-in + zoom-out keyframes */
+    @keyframes img-fade-zoomout {
+      from {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    @keyframes img-fade-zoomout-2 {
+      from {
+        transform: scale(1.05);
+        opacity: 0;
+      }
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* landing text: zoom OUT from scale(3) down to normal scale(1) */
+    @keyframes landing-text-zoomout {
+      /* keep some control points if you want easing behavior */
+      0% {
+        opacity: 1;
+        transform: scale(3);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.7);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .tagList {
+      margin: 0;
+      padding-inline: 0;
+      list-style: none;
+    }
+    .tagList li {
+      padding: 1rem;
+      background: var(green);
+      border-radius: 0.5rem;
+      box-shadow: 0 0.5rem 1rem -0.25rem var(blue);
+    }
+    .scroller {
+      max-width: 1000px;
+    }
+    .scrollerInner {
+      /* padding-block: 1rem; */
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .scroller {
+      overflow: hidden;
+      -webkit-mask: linear-gradient(
+        90deg,
+        transparent,
+        white,
+        20%,
+        white,
+        80%,
+        transparent
+      );
+      mask: linear-gradient(
+        90deg,
+        transparent,
+        white,
+        20%,
+        white,
+        80%,
+        transparent
+      );
+    }
+
+    .scroller .scrollerInner {
+      width: max-content;
+      flex-wrap: nowrap;
+      animation: scroll var(--_animation-duration, 40s)
+        var(--_animation-direction, forwards) linear infinite;
+    }
+
+    .scroller[data-direction="right"] .scrollerInner {
+      --_animation-direction: reverse;
+    }
+    .scroller[data-direction="left"] .scrollerInner {
+      --_animation-direction: forwards;
+    }
+    .scroller[data-speed="slow"] .scrollerInner {
+      --_animation-duration: 60s;
+    }
+    .scroller[data-speed="fast"] .scrollerInner {
+      --_animation-duration: 20s;
+    }
+
+    @keyframes scroll {
+      to {
+        transform: translate(calc(-50% - 0.5rem));
+      }
+    }
+  }
+}
+
+
+/* end --------------------------------------------------*/
+
+.grid-container {
+  width: 100vw;
+  height: 400vh;
+  position: relative;
+}
+.grid {
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 70vw;
+  height: 60vw;
+  margin: 0 calc(100vw / 20 * 3);
+  position: absolute;
+  
+}
+@media only screen and (max-width: 580px) {
+  .grid {
+    margin: 0;
+    width: 100vw;
+    height: 89.444vw;
+  }
+}
+.gridBlock {
+  background-size: cover;
+  background-color: rgb(255, 255, 255);
+}
+.gridLayer {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  will-change: transform;
+  transform-origin: 44.951% 50%;
+}
+.gridLayer:nth-child(1) .gridBlock {
+  top: 5vw;
+  left: 20vw;
+  width: 10vw;
+  height: 10vw;
+}
+@media only screen and (max-width: 580px) {
+  .gridLayer:nth-child(1) .gridBlock {
+    top: 11.111vw;
+    left: 23.889vw;
+    width: 15vw;
+    height: 15vw;
+  }
+}
+
+
+.gridBlock {
+  display: block;
+  position: absolute;
+}

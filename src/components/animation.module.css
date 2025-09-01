@@ -8,7 +8,7 @@
       animation: landing-text-zoomout linear forwards;
       animation-timeline: view();
       /* animation-range: exit; */
-      transform-origin:center ;
+      transform-origin: center;
       height: 100vh;
       overflow-y: auto;
       overflow-x: hidden;
@@ -156,7 +156,6 @@
   }
 }
 
-
 /* end --------------------------------------------------*/
 
 .grid-container {
@@ -172,7 +171,6 @@
   height: 60vw;
   margin: 0 calc(100vw / 20 * 3);
   position: absolute;
-  
 }
 @media only screen and (max-width: 580px) {
   .grid {
@@ -209,8 +207,42 @@
   }
 }
 
-
 .gridBlock {
   display: block;
   position: absolute;
 }
+
+/* Preloader */
+
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #EFF2E8;
+  z-index: 9999;
+  display: flex;
+  justify-content: flex-start; /* move child to left */
+  align-items: flex-end;       /* move child to bottom */
+  padding: 2rem; /* optional: space from edges */
+  transition: transform 0.5s ease-in-out;
+}
+
+.preloader.slideUp {
+  transform: translateY(-100vh);
+  transition-delay: 10s; /* adjust as needed */
+}
+
+.counter {
+  font-size: 12em;
+  font-weight: bold;
+  color: #E0D1B9;
+  transition: opacity 1s ease-in-out;
+  line-height: 1;
+}
+
+.counter.hide {
+  opacity: 0;
+}
+

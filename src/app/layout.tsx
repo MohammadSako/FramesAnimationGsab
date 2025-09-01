@@ -2,7 +2,7 @@ import * as React from "react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import NavbarNextUI from "@/components/layouts/navbarNextUI";
+// import NavbarNextUI from "@/components/layouts/navbarNextUI";
 const inter = Inter({ subsets: ["latin"] });
 import {Providers} from "./providers";
 
@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <NavbarNextUI />
+          {/* <NavbarNextUI /> */}
           {children}
         </Providers>
       </body>

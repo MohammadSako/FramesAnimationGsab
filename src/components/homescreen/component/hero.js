@@ -3,11 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import HeroTitle from "./component/heroTitle";
+import HeroTitle from "./heroTitle";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function HeroCanvas() {
+export default function Hero() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const imagesRef = useRef([]);
@@ -141,17 +141,12 @@ export default function HeroCanvas() {
               style={{ display: ready ? "block" : "none" }}
             />
 
-            {ready && (
-              <div
-                className="absolute top-0 bottom-0 w-full"
-                style={{ opacity }}
-              >
-                <HeroTitle />
-              </div>
-            )}
+            <div className="absolute top-0 bottom-0 w-full" style={{ opacity }}>
+              <HeroTitle />
+            </div>
 
             {!ready && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black text-white">
+              <div className="z-55 absolute inset-0 flex items-center justify-center bg-black text-white">
                 <div className="flex flex-col items-center">
                   <div className="mb-4">Loading {progress}%</div>
                   <div className="w-48 h-2 bg-gray-700 rounded overflow-hidden">

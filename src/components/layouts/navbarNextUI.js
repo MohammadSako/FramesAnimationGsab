@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -18,6 +18,7 @@ import Links from "./components/links";
 
 export default function NavbarNextUI() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [opacity, setOpacity] = useState(1); // 1 = fully visible, 0 = hidden
 
   const navigation = [
     { name: "Products", href: "https://www.adaline.ai/" },
@@ -25,11 +26,25 @@ export default function NavbarNextUI() {
     { name: "Blog", href: "#https://www.adaline.ai/blog" },
   ];
 
+ // handle scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const maxScroll = 500; // how many px until fully hidden
+      const newOpacity = Math.max(0, 1 - scrollTop / maxScroll);
+      setOpacity(newOpacity);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <Navbar
-      maxWidth=""
+      maxWidth="2xl"
       isBlurred={false} // remove default frosted glass
-      className="px-4 bg-transparent fixed"
+      className={`px-6 fixed transition-opacity duration-300`}
+      style={{ opacity }} // smooth fade via inline style
       classNames={{
         base: "bg-transparent shadow-none", // root container
         wrapper: "bg-transparent", // inner wrapper
@@ -53,7 +68,7 @@ export default function NavbarNextUI() {
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent justify="end">
+      <NavbarContent justify="end" className="gap-2">
         <NavbarItem className="hidden lg:flex">
           <WatchBtn />
         </NavbarItem>

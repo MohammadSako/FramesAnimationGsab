@@ -1,10 +1,6 @@
-import { Fragment_Mono, IBM_Plex_Sans } from "next/font/google";
+import { IBM_Plex_Sans } from "next/font/google";
 import IconsList from "./IconsList";
 
-const fragmentMono = Fragment_Mono({
-  weight: "400",
-  subsets: ["latin"],
-});
 const IBMPlexSans = IBM_Plex_Sans({
   weight: "400",
   subsets: ["latin"],
@@ -34,5 +30,3 @@ export default function HeroTitle() {
     </div>
   );
 }
-
-

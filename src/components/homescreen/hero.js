@@ -334,7 +334,7 @@ export default function HeroCanvas() {
   const [ready, setReady] = useState(false);
 
   const frameCount = 149;
-  const currentFrame = (i) => `/frames/${i}.avif`;
+  const currentFrame = (i) => `/avif/${i}.avif`;
 
   // preload images with progress
   useLayoutEffect(() => {

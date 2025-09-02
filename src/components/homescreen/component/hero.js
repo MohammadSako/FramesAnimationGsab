@@ -14,7 +14,7 @@ export default function Hero({ onProgressChange }) {
   const rafRef = useRef(null);
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
-  const [opacity, setOpacity] = useState(1); // 1 = fully visible, 0 = hidden
+  const [opacity, setOpacity] = useState(1);
 
   useEffect(() => {
     if (onProgressChange) {
@@ -22,15 +22,14 @@ export default function Hero({ onProgressChange }) {
     }
   }, [progress, onProgressChange]);
 
-  // handle scroll
+  // scroll fade-out effect
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
-      const maxScroll = 2500; // how many px until fully hidden
+      const maxScroll = 2500;
       const newOpacity = Math.max(0, 1 - scrollTop / maxScroll);
       setOpacity(newOpacity);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -38,13 +37,13 @@ export default function Hero({ onProgressChange }) {
   const frameCount = 149;
   const currentFrame = (i) => `/avif/${i}.avif`;
 
-  // preload images with progress
+  // preload images
   useLayoutEffect(() => {
     imagesRef.current = new Array(frameCount + 1);
     let loaded = 0;
 
     for (let i = 1; i <= frameCount; i++) {
-      const img = new Image();
+      const img = new window.Image();
       img.src = currentFrame(i);
       img.onload = () => {
         loaded++;
@@ -54,58 +53,62 @@ export default function Hero({ onProgressChange }) {
       imagesRef.current[i] = img;
     }
 
+    // make canvas responsive
     const canvas = canvasRef.current;
     const setSize = () => {
       if (!canvas) return;
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      drawFrame(1); // redraw first frame on resize
     };
+
     setSize();
     window.addEventListener("resize", setSize);
     return () => window.removeEventListener("resize", setSize);
   }, []);
 
+  // function to draw frame
+  const drawFrame = (frame) => {
+    const ctx = canvasRef.current.getContext("2d");
+    const f = Math.min(frameCount, Math.max(1, Math.floor(frame)));
+    const img = imagesRef.current[f];
+    if (img && ctx) {
+      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+      // maintain cover aspect ratio
+      const canvasRatio = canvasRef.current.width / canvasRef.current.height;
+      const imgRatio = img.width / img.height;
+      let sx = 0,
+        sy = 0,
+        sWidth = img.width,
+        sHeight = img.height;
+
+      if (imgRatio > canvasRatio) {
+        sWidth = img.height * canvasRatio;
+        sx = (img.width - sWidth) / 2;
+      } else {
+        sHeight = img.width / canvasRatio;
+        sy = (img.height - sHeight) / 2;
+      }
+
+      ctx.drawImage(
+        img,
+        sx,
+        sy,
+        sWidth,
+        sHeight,
+        0,
+        0,
+        canvasRef.current.width,
+        canvasRef.current.height
+      );
+    }
+  };
+
+  // gsap scroll animation
   useLayoutEffect(() => {
     if (!ready || !containerRef.current) return;
-    const ctx = canvasRef.current.getContext("2d");
     const obj = { frame: 1 };
-
-    function draw() {
-      const f = Math.min(frameCount, Math.max(1, Math.floor(obj.frame)));
-      const img = imagesRef.current[f];
-      if (img && ctx) {
-        ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-        // aspect ratio cover (like object-fit: cover)
-        const canvasRatio = canvasRef.current.width / canvasRef.current.height;
-        const imgRatio = img.width / img.height;
-        let sx = 0,
-          sy = 0,
-          sWidth = img.width,
-          sHeight = img.height;
-
-        if (imgRatio > canvasRatio) {
-          sWidth = img.height * canvasRatio;
-          sx = (img.width - sWidth) / 2;
-        } else {
-          sHeight = img.width / canvasRatio;
-          sy = (img.height - sHeight) / 2;
-        }
-
-        ctx.drawImage(
-          img,
-          sx,
-          sy,
-          sWidth,
-          sHeight,
-          0,
-          0,
-          canvasRef.current.width,
-          canvasRef.current.height
-        );
-      }
-    }
 
     const tween = gsap.to(obj, {
       frame: frameCount,
@@ -120,11 +123,11 @@ export default function Hero({ onProgressChange }) {
       },
       onUpdate: () => {
         if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = requestAnimationFrame(draw);
+        rafRef.current = requestAnimationFrame(() => drawFrame(obj.frame));
       },
     });
 
-    imagesRef.current[1].onload = draw;
+    imagesRef.current[1].onload = () => drawFrame(1);
 
     return () => {
       tween.kill();
@@ -142,12 +145,14 @@ export default function Hero({ onProgressChange }) {
       <div className="grid-container">
         <div className="grid">
           <div className="gridLayer relative h-screen w-screen">
+            {/* responsive canvas */}
             <canvas
               ref={canvasRef}
               className="absolute inset-0 w-full h-full"
               style={{ display: ready ? "block" : "none" }}
             />
 
+            {/* overlay content */}
             <div className="absolute top-0 bottom-0 w-full" style={{ opacity }}>
               <HeroTitle />
             </div>

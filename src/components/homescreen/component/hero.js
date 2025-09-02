@@ -7,7 +7,7 @@ import HeroTitle from "./heroTitle";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero() {
+export default function Hero({ onProgressChange, onReadyChange }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const imagesRef = useRef([]);
@@ -15,6 +15,13 @@ export default function Hero() {
   const [progress, setProgress] = useState(0);
   const [ready, setReady] = useState(false);
   const [opacity, setOpacity] = useState(1); // 1 = fully visible, 0 = hidden
+
+  useEffect(() => {
+    if (onProgressChange) {
+      onProgressChange(progress);
+      onReadyChange(ready);
+    }
+  }, [progress, onProgressChange, ready, onReadyChange]);
 
   // handle scroll
   useEffect(() => {
@@ -144,20 +151,6 @@ export default function Hero() {
             <div className="absolute top-0 bottom-0 w-full" style={{ opacity }}>
               <HeroTitle />
             </div>
-
-            {!ready && (
-              <div className="z-55 absolute inset-0 flex items-center justify-center bg-black text-white">
-                <div className="flex flex-col items-center">
-                  <div className="mb-4">Loading {progress}%</div>
-                  <div className="w-48 h-2 bg-gray-700 rounded overflow-hidden">
-                    <div
-                      className="h-full bg-green-500 transition-all duration-200"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

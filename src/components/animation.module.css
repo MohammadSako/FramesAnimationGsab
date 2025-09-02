@@ -213,50 +213,20 @@
 }
 
 /* Preloader */
-
-/* .preloader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #EFF2E8;
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.5s ease-in-out;
-}
-
-.preloader.slideUp {
-  transform: translateY(-100vh);
-  transition-delay: 10s; 
-}
-
-.counter {
-  font-size: 12em;
-  font-weight: bold;
-  color: #E0D1B9; 
-  transition: opacity 1s ease-in-out;
-}
-
-.counter.hide {
-  opacity: 0;
-} */
-
 .preloader {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  /* background-color: #eff2e8; */
+  background-color: #eff2e8;
   z-index: 9999;
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
   padding: 2rem;
   transition: transform 1s ease-in-out;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .preloader.slideUp {

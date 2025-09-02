@@ -1,15 +1,3 @@
-// "use client";
-
-// import styles from "../../animation.module.css";
-
-// export default function Preloader({ progress }) {
-//   return (
-//     <div className={styles.preloader}>
-//       <div className={styles.counter}>{progress}</div>
-//     </div>
-//   );
-// }
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -25,7 +13,7 @@ export default function Preloader({ progress }) {
   }, [progress]);
 
   return (
-    <div className={`${styles.preloader} ${slideUp ? styles.slideUp : ""} bg-[#eff2e8]`}>
+    <div className={`${styles.preloader} ${slideUp ? styles.slideUp : ""}`}>
       <div className={`${styles.counter} ${slideUp ? styles.hide : ""}`}>
         {progress}
       </div>

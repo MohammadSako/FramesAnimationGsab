@@ -54,14 +54,14 @@ export default function NavbarNextUI() {
       }}
       onMenuOpenChange={setIsMenuOpen}
     >
-      <NavbarContent className="hidden sm:flex gap-10">
+      <NavbarContent className="hidden lg:flex gap-10">
         <Links />
       </NavbarContent>
 
       <NavbarContent justify="center">
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden"
+          className="lg:hidden"
         />
         <NavbarBrand>
           <Logo />
@@ -69,7 +69,7 @@ export default function NavbarNextUI() {
       </NavbarContent>
 
       <NavbarContent justify="end" className="gap-2">
-        <NavbarItem className="hidden lg:flex">
+        <NavbarItem>
           <WatchBtn />
         </NavbarItem>
         <NavbarItem>
@@ -77,7 +77,7 @@ export default function NavbarNextUI() {
         </NavbarItem>
       </NavbarContent>
 
-      <NavbarMenu>
+      <NavbarMenu className="max-h-[450px] bg-[#FBFDF6]">
         {navigation.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link

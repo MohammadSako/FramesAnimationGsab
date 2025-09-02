@@ -17,31 +17,18 @@ import styles from "../../animation.module.css";
 
 export default function Preloader({ progress }) {
   const [slideUp, setSlideUp] = useState(false);
-  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
     if (progress === 100) {
-      // Wait 1s, then start slide up
-      const timer = setTimeout(() => {
-        setSlideUp(true);
-      }, 1000);
-
-      return () => clearTimeout(timer);
+      setSlideUp(true);
     }
   }, [progress]);
 
-  if (!visible) return null; // completely removed after animation
-
   return (
-    <div
-      className={`${styles.preloader} ${slideUp ? styles.slideUp : ""}`}
-      onTransitionEnd={() => setVisible(false)} // unmount after slide finishes
-    >
-      <div className={styles.counter}>{progress}</div>
+    <div className={`${styles.preloader} ${slideUp ? styles.slideUp : ""} bg-[#eff2e8]`}>
+      <div className={`${styles.counter} ${slideUp ? styles.hide : ""}`}>
+        {progress}
+      </div>
     </div>
   );
 }
-
-
-
-

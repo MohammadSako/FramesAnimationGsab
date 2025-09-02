@@ -7,7 +7,7 @@ import HeroTitle from "./heroTitle";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero({ onProgressChange, onReadyChange }) {
+export default function Hero({ onProgressChange }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const imagesRef = useRef([]);
@@ -19,9 +19,8 @@ export default function Hero({ onProgressChange, onReadyChange }) {
   useEffect(() => {
     if (onProgressChange) {
       onProgressChange(progress);
-      onReadyChange(ready);
     }
-  }, [progress, onProgressChange, ready, onReadyChange]);
+  }, [progress, onProgressChange]);
 
   // handle scroll
   useEffect(() => {
@@ -65,6 +64,7 @@ export default function Hero({ onProgressChange, onReadyChange }) {
     window.addEventListener("resize", setSize);
     return () => window.removeEventListener("resize", setSize);
   }, []);
+
 
   useLayoutEffect(() => {
     if (!ready || !containerRef.current) return;

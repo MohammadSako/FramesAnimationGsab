@@ -1,26 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Hero from "./component/hero";
 import NavbarNextUI from "../layouts/navbarNextUI";
 import Preloader from "../layouts/components/preloader";
 
 export default function Landing() {
-  const [ready, setReady] = useState(false);
   const [progress, setProgress] = useState(0);
+//   const [slideUp, setSlideUp] = useState(false);
 
-  console.log("ready", ready);
-  console.log("progress", progress);
+  // wait 2 seconds before the preloader disappears
+//   useEffect(() => {
+//     if (progress === 100) {
+//       const timer = setTimeout(() => {
+//         setSlideUp(true);
+//       }, 2000);
+//       return () => clearTimeout(timer);
+//     }
+//   }, [progress]);
+
   return (
     <>
-      {!ready ? (
-        <Preloader progress={progress} />
-      ) : (
-        <>
-          <NavbarNextUI />
-        </>
-      )}
-      <Hero onProgressChange={setProgress} onReadyChange={setReady} />
+     <Preloader progress={progress} />
+      <NavbarNextUI />
+      <Hero onProgressChange={setProgress} />
     </>
   );
 }

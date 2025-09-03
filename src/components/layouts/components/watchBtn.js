@@ -5,15 +5,19 @@ const fragmentMono = Fragment_Mono({ subsets: ["latin"], weight: "400" });
 export default function WatchBtn() {
   return (
     <Link
-      className="inline-flex items-center justify-center whitespace-nowrap rounded-[20px] cursor-pointer transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 atlas-web-mono shrink-0 px-6 gap-3 bg-transparent border border-[#e0e5d5] text-[#203b14] hover:text-[#3b5c23]/80 hover:border-[#e0e5d5] disabled:border-[#e0e5d5] disabled:bg-transparent disabled:text-[#c5ccb6] ring-offset-[#fbfdf6] focus-visible:ring-[#203b14]  h-10 overflow-clip pl-5 !bg-[#fbfdf6]"
-      // className="bg-[#FBFDF6] inline-flex items-center justify-center whitespace-nowrap rounded-[20px] cursor-pointer transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0  shrink-0 h-10 px-6 gap-3   disabled:bg-[#eff2e8]  ring-offset-[#fbfdf6]  plausible-event-name--signup"
+      className="inline-flex items-center justify-center whitespace-nowrap rounded-[20px] cursor-pointer transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 atlas-web-mono shrink-0 lg:px-[24px] px-[18px] gap-3 bg-transparent border border-[#e0e5d5] text-[#203b14] hover:text-[#3b5c23]/80 hover:border-[#e0e5d5] disabled:border-[#e0e5d5] disabled:bg-transparent disabled:text-[#c5ccb6] ring-offset-[#fbfdf6] focus-visible:ring-[#203b14] lg:h-10 h-8 overflow-clip pl-5 !bg-[#fbfdf6]"
       href="https://app.adaline.ai/sign-up?utm_source=adaline.ai"
       rel="noopener noreferrer"
     >
       <p
-        className={`${fragmentMono.className} text-sm leading-tight tracking-widest hover:cursor-pointer`}
+        className={`${fragmentMono.className} hidden lg:flex text-xs leading-tight tracking-widest hover:cursor-pointer`}
       >
         WATCH DEMO
+      </p>
+      <p
+        className={`${fragmentMono.className} lg:hidden text-xs leading-tight tracking-widest hover:cursor-pointer`}
+      >
+        DEMO
       </p>
       <div className="-mr-3.5 ml-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#e0e5d5]">
         <svg

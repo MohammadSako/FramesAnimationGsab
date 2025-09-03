@@ -26,7 +26,7 @@ export default function NavbarNextUI() {
     { name: "Blog", href: "#https://www.adaline.ai/blog" },
   ];
 
- // handle scroll
+  // handle scroll
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -41,13 +41,13 @@ export default function NavbarNextUI() {
 
   return (
     <Navbar
-      maxWidth="2xl"
+      maxWidth="full"
       isBlurred={false} // remove default frosted glass
-      className={`px-6 fixed transition-opacity duration-300`}
+      className={`fixed transition-opacity duration-300 md:pe-[48px] md:ps-[48px] pe-[16px] ps-[16px]`}
       style={{ opacity }} // smooth fade via inline style
       classNames={{
-        base: "bg-transparent shadow-none", // root container
-        wrapper: "bg-transparent", // inner wrapper
+        base: "bg-transparent shadow-none lg:h-16 h-12", // root container
+        wrapper: "bg-transparent px-0", // inner wrapper
         content: "bg-transparent", // content slot
         menu: "bg-transparent shadow-none", // mobile menu panel
         menuItem: "bg-transparent", // mobile menu item
@@ -59,25 +59,25 @@ export default function NavbarNextUI() {
       </NavbarContent>
 
       <NavbarContent justify="center">
-        <NavbarMenuToggle
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="lg:hidden"
-        />
         <NavbarBrand>
           <Logo />
         </NavbarBrand>
       </NavbarContent>
 
       <NavbarContent justify="end" className="gap-2">
-        <NavbarItem>
+        <NavbarItem className="hidden xs:flex">
           <WatchBtn />
         </NavbarItem>
         <NavbarItem>
           <StartBtn />
         </NavbarItem>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="lg:hidden"
+        />
       </NavbarContent>
 
-      <NavbarMenu className="max-h-[450px] bg-[#FBFDF6]">
+      <NavbarMenu className="max-h-[450px] bg-[#F5F2EB]">
         {navigation.map((item, index) => (
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link

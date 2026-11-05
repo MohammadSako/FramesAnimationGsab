@@ -13,9 +13,11 @@ export default function HeroTitle() {
         className={`${IBMPlexSans.className} text-[#0a1d08] tracking-[-0.04em] text-[34px] leading-[38px] max-w-[32ch] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] md:tracking-[-0.04em] pe-[16px] ps-[16px]`}
       >
         <span>
-          The single platform to iterate, evaluate, deploy, and monitor LLMs
+          This is not the original website; it is an attempt to recreate it
+          using GSAP.
         </span>
       </h1>
+
 
       <div className="max-w-full md:w-full">
         <div className="flex flex-col items-center overflow-clip">

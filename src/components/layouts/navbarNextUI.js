@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -16,9 +16,9 @@ import WatchBtn from "./components/watchBtn";
 import StartBtn from "./components/startBtn";
 import Links from "./components/links";
 
-export default function NavbarNextUI() {
+function NavbarNextUI() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [opacity, setOpacity] = useState(1); // 1 = fully visible, 0 = hidden
+  const navRef = useRef(null);
 
   const navigation = [
     { name: "Products", href: "https://www.adaline.ai/" },
@@ -26,25 +26,35 @@ export default function NavbarNextUI() {
     { name: "Blog", href: "#https://www.adaline.ai/blog" },
   ];
 
-  // handle scroll
+  // Fade out on scroll. Writes the style directly (rAF-throttled) instead of
+  // re-rendering the whole navbar on every scroll event.
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const maxScroll = 500; // how many px until fully hidden
-      const newOpacity = Math.max(0, 1 - scrollTop / maxScroll);
-      setOpacity(newOpacity);
+    let raf = 0;
+    const maxScroll = 500; // how many px until fully hidden
+    const update = () => {
+      raf = 0;
+      if (navRef.current) {
+        const opacity = Math.max(0, 1 - window.scrollY / maxScroll);
+        navRef.current.style.opacity = String(opacity);
+      }
     };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   return (
     <Navbar
+      ref={navRef}
       maxWidth="full"
       isBlurred={false} // remove default frosted glass
       className={`fixed transition-opacity duration-300 md:pe-[48px] md:ps-[48px] pe-[16px] ps-[16px]`}
-      style={{ opacity }} // smooth fade via inline style
       classNames={{
         base: "bg-transparent shadow-none lg:h-16 h-12", // root container
         wrapper: "bg-transparent px-0", // inner wrapper
@@ -100,3 +110,5 @@ export default function NavbarNextUI() {
     </Navbar>
   );
 }
+
+export default memo(NavbarNextUI);

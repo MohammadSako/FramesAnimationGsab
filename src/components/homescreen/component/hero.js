@@ -1,139 +1,170 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroTitle from "./heroTitle";
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Hero({ onProgressChange }) {
+const FRAME_COUNT = 149;
+const FADE_DISTANCE = 2500;
+const currentFrame = (i) => `/avif/${i}.avif`;
+
+// HeroTitle never changes, so keep it out of Hero's re-renders.
+const MemoHeroTitle = memo(HeroTitle);
+
+function Hero({ onProgressChange }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
+  const overlayRef = useRef(null);
+  const ctxRef = useRef(null);
   const imagesRef = useRef([]);
-  const rafRef = useRef(null);
-  const [progress, setProgress] = useState(0);
+  const frameRef = useRef(1); // frame the scroll position wants
+  const drawnRef = useRef(0); // frame currently on the canvas
   const [ready, setReady] = useState(false);
-  const [opacity, setOpacity] = useState(1);
 
-  useEffect(() => {
-    if (onProgressChange) {
-      onProgressChange(progress);
+  // Draw a frame with "cover" fit. Skips work when the frame is already shown.
+  const drawFrame = (frame, force = false) => {
+    const canvas = canvasRef.current;
+    const ctx = ctxRef.current;
+    const f = Math.min(FRAME_COUNT, Math.max(1, Math.round(frame)));
+    frameRef.current = f;
+    if (!canvas || !ctx || (!force && drawnRef.current === f)) return;
+
+    const img = imagesRef.current[f];
+    if (!img || !img.complete || !img.naturalWidth) return;
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const canvasRatio = cw / ch;
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    let sx = 0,
+      sy = 0,
+      sw = iw,
+      sh = ih;
+
+    if (iw / ih > canvasRatio) {
+      sw = ih * canvasRatio;
+      sx = (iw - sw) / 2;
+    } else {
+      sh = iw / canvasRatio;
+      sy = (ih - sh) / 2;
     }
-  }, [progress, onProgressChange]);
 
-  // scroll fade-out effect
+    ctx.clearRect(0, 0, cw, ch);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, cw, ch);
+    drawnRef.current = f;
+  };
+
+  // Overlay fade-out: write straight to the DOM instead of setState on every
+  // scroll event (that re-rendered the whole hero on each scroll tick).
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const maxScroll = 2500;
-      const newOpacity = Math.max(0, 1 - scrollTop / maxScroll);
-      setOpacity(newOpacity);
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      if (overlayRef.current) {
+        const opacity = Math.max(0, 1 - window.scrollY / FADE_DISTANCE);
+        overlayRef.current.style.opacity = String(opacity);
+      }
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
-  const frameCount = 149;
-  const currentFrame = (i) => `/avif/${i}.avif`;
-
-  // preload images
+  // Preload + decode frames, and size the canvas.
   useLayoutEffect(() => {
-    imagesRef.current = new Array(frameCount + 1);
+    let cancelled = false;
     let loaded = 0;
+    let lastReported = -1;
+    imagesRef.current = new Array(FRAME_COUNT + 1);
 
-    for (let i = 1; i <= frameCount; i++) {
+    const onDone = () => {
+      if (cancelled) return;
+      loaded++;
+      const pct = Math.round((loaded / FRAME_COUNT) * 100);
+      if (pct !== lastReported) {
+        lastReported = pct;
+        onProgressChange?.(pct);
+      }
+      if (loaded === FRAME_COUNT) setReady(true);
+    };
+
+    for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new window.Image();
+      img.decoding = "async";
       img.src = currentFrame(i);
-      img.onload = () => {
-        loaded++;
-        setProgress(Math.round((loaded / frameCount) * 100));
-        if (loaded === frameCount) setReady(true);
-      };
+      // decode() moves AVIF decoding off the scroll path, so the first draw of
+      // each frame doesn't stall the main thread. Errors still count, so the
+      // preloader can't get stuck below 100.
+      img
+        .decode()
+        .catch(() => {})
+        .finally(onDone);
       imagesRef.current[i] = img;
     }
 
-    // make canvas responsive
     const canvas = canvasRef.current;
+    ctxRef.current = canvas.getContext("2d");
+
+    let resizeRaf = 0;
     const setSize = () => {
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      drawFrame(1); // redraw first frame on resize
+      resizeRaf = 0;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+      drawFrame(frameRef.current, true); // keep the current frame on resize
+    };
+    const onResize = () => {
+      if (!resizeRaf) resizeRaf = requestAnimationFrame(setSize);
     };
 
     setSize();
-    window.addEventListener("resize", setSize);
-    return () => window.removeEventListener("resize", setSize);
+    window.addEventListener("resize", onResize);
+    return () => {
+      cancelled = true;
+      window.removeEventListener("resize", onResize);
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // function to draw frame
-  const drawFrame = (frame) => {
-    const ctx = canvasRef.current.getContext("2d");
-    const f = Math.min(frameCount, Math.max(1, Math.floor(frame)));
-    const img = imagesRef.current[f];
-    if (img && ctx) {
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
-      // maintain cover aspect ratio
-      const canvasRatio = canvasRef.current.width / canvasRef.current.height;
-      const imgRatio = img.width / img.height;
-      let sx = 0,
-        sy = 0,
-        sWidth = img.width,
-        sHeight = img.height;
-
-      if (imgRatio > canvasRatio) {
-        sWidth = img.height * canvasRatio;
-        sx = (img.width - sWidth) / 2;
-      } else {
-        sHeight = img.width / canvasRatio;
-        sy = (img.height - sHeight) / 2;
-      }
-
-      ctx.drawImage(
-        img,
-        sx,
-        sy,
-        sWidth,
-        sHeight,
-        0,
-        0,
-        canvasRef.current.width,
-        canvasRef.current.height
-      );
-    }
-  };
-
-  // gsap scroll animation
+  // GSAP scroll animation. onUpdate already runs on GSAP's rAF ticker, so we
+  // draw directly; drawFrame skips identical frames.
   useLayoutEffect(() => {
     if (!ready || !containerRef.current) return;
     const obj = { frame: 1 };
+    drawFrame(1, true);
 
-    const tween = gsap.to(obj, {
-      frame: frameCount,
-      snap: "frame",
-      ease: "none",
-      scrollTrigger: {
-        trigger: ".grid-container",
-        start: "top top",
-        end: "+=8000",
-        scrub: true,
-        pin: ".grid-container",
-      },
-      onUpdate: () => {
-        if (rafRef.current) cancelAnimationFrame(rafRef.current);
-        rafRef.current = requestAnimationFrame(() => drawFrame(obj.frame));
-      },
-    });
+    const ctx = gsap.context(() => {
+      gsap.to(obj, {
+        frame: FRAME_COUNT,
+        snap: "frame",
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".grid-container",
+          start: "top top",
+          end: "+=8000",
+          scrub: true,
+          pin: ".grid-container",
+        },
+        onUpdate: () => drawFrame(obj.frame),
+      });
+    }, containerRef);
 
-    imagesRef.current[1].onload = () => drawFrame(1);
-
-    return () => {
-      tween.kill();
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-    };
+    return () => ctx.revert();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
 
   return (
@@ -145,16 +176,17 @@ export default function Hero({ onProgressChange }) {
       <div className="grid-container">
         <div className="grid">
           <div className="gridLayer relative h-screen w-screen">
-            {/* responsive canvas */}
             <canvas
               ref={canvasRef}
               className="absolute inset-0 w-full h-full"
               style={{ display: ready ? "block" : "none" }}
             />
 
-            {/* overlay content */}
-            <div className="absolute top-0 bottom-0 w-full" style={{ opacity }}>
-              <HeroTitle />
+            <div
+              ref={overlayRef}
+              className="absolute top-0 bottom-0 w-full will-change-[opacity]"
+            >
+              <MemoHeroTitle />
             </div>
           </div>
         </div>
@@ -162,3 +194,5 @@ export default function Hero({ onProgressChange }) {
     </div>
   );
 }
+
+export default memo(Hero);

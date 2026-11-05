@@ -3,7 +3,6 @@
 import { memo, useEffect, useRef, useState } from "react";
 import {
   Navbar,
-  NavbarBrand,
   NavbarContent,
   NavbarItem,
   NavbarMenuToggle,
@@ -75,12 +74,6 @@ function NavbarNextUI() {
         <Links />
       </NavbarContent>
 
-      <NavbarContent justify="center">
-        <NavbarBrand>
-          <Logo />
-        </NavbarBrand>
-      </NavbarContent>
-
       <NavbarContent justify="end" className="gap-2">
         <NavbarItem className="hidden xs:flex">
           <WatchBtn />
@@ -103,8 +96,8 @@ function NavbarNextUI() {
                 index === 2
                   ? "primary"
                   : index === navigation.length - 1
-                  ? "danger"
-                  : "foreground"
+                    ? "danger"
+                    : "foreground"
               }
               href={item.href}
               size="lg"

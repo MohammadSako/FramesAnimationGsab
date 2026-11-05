@@ -30,12 +30,19 @@ function NavbarNextUI() {
   // re-rendering the whole navbar on every scroll event.
   useEffect(() => {
     let raf = 0;
+    let hidden = false;
     const maxScroll = 500; // how many px until fully hidden
     const update = () => {
       raf = 0;
-      if (navRef.current) {
-        const opacity = Math.max(0, 1 - window.scrollY / maxScroll);
-        navRef.current.style.opacity = String(opacity);
+      const el = navRef.current;
+      if (!el) return;
+      const opacity = Math.max(0, 1 - window.scrollY / maxScroll);
+      el.style.opacity = String(opacity);
+      // Fully faded: take it out of painting and hit-testing.
+      const shouldHide = opacity === 0;
+      if (shouldHide !== hidden) {
+        hidden = shouldHide;
+        el.style.visibility = hidden ? "hidden" : "";
       }
     };
     const onScroll = () => {
@@ -54,7 +61,7 @@ function NavbarNextUI() {
       ref={navRef}
       maxWidth="full"
       isBlurred={false} // remove default frosted glass
-      className={`fixed transition-opacity duration-300 md:pe-[48px] md:ps-[48px] pe-[16px] ps-[16px]`}
+      className={`fixed md:pe-[48px] md:ps-[48px] pe-[16px] ps-[16px]`}
       classNames={{
         base: "bg-transparent shadow-none lg:h-16 h-12", // root container
         wrapper: "bg-transparent px-0", // inner wrapper

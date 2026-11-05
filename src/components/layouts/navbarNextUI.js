@@ -21,9 +21,9 @@ function NavbarNextUI() {
   const navRef = useRef(null);
 
   const navigation = [
-    { name: "Products", href: "https://www.adaline.ai/" },
-    { name: "Pricing", href: "https://www.adaline.ai/pricing" },
-    { name: "Blog", href: "#https://www.adaline.ai/blog" },
+    { name: "Products", href: "#" },
+    { name: "Pricing", href: "#" },
+    { name: "Blog", href: "#" },
   ];
 
   // Fade out on scroll. Writes the style directly (rAF-throttled) instead of

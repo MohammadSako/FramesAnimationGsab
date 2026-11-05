@@ -1,5 +1,6 @@
 import { IBM_Plex_Sans } from "next/font/google";
 import IconsList from "./IconsList";
+import Link from "next/link";
 
 const IBMPlexSans = IBM_Plex_Sans({
   weight: "400",
@@ -16,8 +17,19 @@ export default function HeroTitle() {
           This is not the original website; it is an attempt to recreate it
           using GSAP.
         </span>
+        <div className="mt-8 text-[14px] md:text-[24px] leading-[20px] md:leading-[28px] text-[#858b94]">
+          <span>
+            <Link
+              href="https://www.awwwards.com/sites/adaline"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#0a1d08] underline"
+            >
+              Visit the original website here.
+            </Link>
+          </span>
+        </div>
       </h1>
-
 
       <div className="max-w-full md:w-full">
         <div className="flex flex-col items-center overflow-clip">

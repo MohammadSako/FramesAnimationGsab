@@ -4,8 +4,8 @@ import type { Metadata } from "next";
 import {Providers} from "./providers";
 
 export const metadata: Metadata = {
-  title: "Adaline Test Copy",
-  description: "Mohammad Murad",
+  title: "Animation GSAB",
+  description: "Mohammad Talal Murad",
 };
 
 export default function RootLayout({

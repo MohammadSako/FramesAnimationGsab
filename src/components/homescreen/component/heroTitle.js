@@ -1,5 +1,6 @@
 import { IBM_Plex_Sans } from "next/font/google";
 import IconsList from "./IconsList";
+import Link from "next/link";
 
 const IBMPlexSans = IBM_Plex_Sans({
   weight: "400",
@@ -13,8 +14,21 @@ export default function HeroTitle() {
         className={`${IBMPlexSans.className} text-[#0a1d08] tracking-[-0.04em] text-[34px] leading-[38px] max-w-[32ch] md:text-[min(53px,min(calc(2.5vh+25px),calc(1.5vw+25px)))] md:leading-[calc(52/53)] md:tracking-[-0.04em] pe-[16px] ps-[16px]`}
       >
         <span>
-          The single platform to iterate, evaluate, deploy, and monitor LLMs
+          This is not the original website; it is an attempt to recreate it
+          using GSAP.
         </span>
+        <div className="mt-8 text-[14px] md:text-[24px] leading-[20px] md:leading-[28px] text-[#858b94]">
+          <span>
+            <Link
+              href="https://www.awwwards.com/sites/adaline"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#0a1d08] underline"
+            >
+              Visit the original website here.
+            </Link>
+          </span>
+        </div>
       </h1>
 
       <div className="max-w-full md:w-full">

@@ -4,7 +4,7 @@ export default function Logo() {
   return (
     <div className="flex-none overflow-hidden">
       <Link
-        href="https://www.adaline.ai/"
+        href="#"
         className="flex-none overflow-hidden"
         aria-label="Adaline Homepage"
       >
